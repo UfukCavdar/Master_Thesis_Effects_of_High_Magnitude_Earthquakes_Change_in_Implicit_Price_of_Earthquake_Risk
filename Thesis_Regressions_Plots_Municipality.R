@@ -24,20 +24,6 @@ munip_rev_2009 = munip_rev[as.integer(substring(munip_rev$FY_Year, 3, 7), 'int')
 sum(is.na(munip_exp_2009$Population_Imputed_1))
 sum(is.na(munip_rev_2009$Population_Imputed_1))
 
-#data.frame(summarize(group_by(munip_exp_2009, ADM2_PCODE), n()))[data.frame(summarize(group_by(munip_exp_2009, ADM2_PCODE), n())) == 10]
-#keep_no_pop = list(unique(munip_exp_2009[is.na(summarize(group_by(munip_exp_2009, ADM2_PCODE), n())[summarize(group_by(munip_exp_2009, ADM2_PCODE), n()) == 10], 'ADM2_PCODE']))
-#munip_exp_2009 = munip_exp_2009[!unlist(munip_exp_2009$ADM2_PCODE) %in% unlist(drop_no_pop), ]
-#drop_no_pop = list(unique(munip_rev_2009[is.na(munip_rev_2009$Population_Imputed_1), 'ADM2_PCODE']))
-#munip_rev_2009 = munip_rev_2009[!unlist(munip_rev_2009$ADM2_PCODE) %in% unlist(drop_no_pop), ]
-#drop_no_unemp = list(unique(munip_exp_2009[is.na(munip_exp_2009$Unemployment_Rate_Imputed_2), 'ADM2_PCODE']))
-#munip_exp_2009 = munip_exp_2009[!unlist(munip_exp_2009$ADM2_PCODE) %in% unlist(drop_no_unemp), ]
-#drop_no_unemp = list(unique(munip_rev_2009[is.na(munip_rev_2009$Unemployment_Rate_Imputed_2), 'ADM2_PCODE']))
-#munip_rev_2009 = munip_rev_2009[!unlist(munip_rev_2009$ADM2_PCODE) %in% unlist(drop_no_unemp), ]
-#drop_no_educ = list(unique(munip_exp_2009[is.na(munip_exp_2009$No_of_elementary_school_percap_1), 'ADM2_PCODE']))
-#munip_exp_2009 = munip_exp_2009[!unlist(munip_exp_2009$ADM2_PCODE) %in% unlist(drop_no_educ), ]
-#drop_no_educ = list(unique(munip_rev_2009[is.na(munip_rev_2009$No_of_elementary_school_percap_1), 'ADM2_PCODE']))
-#munip_rev_2009 = munip_rev_2009[!unlist(munip_rev_2009$ADM2_PCODE) %in% unlist(drop_no_educ), ]
-
 colnames(munip_exp_2009)[7] = 'Social_welfare_municipalities_Exp'
 colnames(munip_exp_2009)[8] = 'Disaster_relief_municipalities_Exp'
 colnames(munip_exp_2009)[10] = 'Health_and_sanitation_municipalities_Exp'
@@ -232,24 +218,6 @@ ratio_2 = c(915, 915, 915, 1050, 915, 915, 915, 915, 1050)
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
   ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
-
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
   png(filename = glue('{file_names[i]}_{substr(eq, 15, 15)}.png'),
       width = ratio[i], height = ratio_2[i], res = 300)
   print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
@@ -376,23 +344,6 @@ ylabel = c('Log local tax per capita', 'Log local tax transfers per capita', 'Lo
 file_names = c('local_tax_munip', 'local_tr_tax_munip', 'local_alloc_tax_munip', 'rents_and_fees_munip', 'treasury_munip', 'prefecture_munip', 'property_munip')
 
 ##---- REVENUE PLOTS LOOPS 6low----
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
 
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
@@ -573,24 +524,6 @@ ratio_2 = c(915, 915, 915, 1050, 915, 915, 915, 915, 1050)
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
   ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
-
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
   png(filename = glue('{file_names[i]}_{substr(eq, 15, 15)}.png'),
       width = ratio[i], height = ratio_2[i], res = 300)
   print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
@@ -717,23 +650,6 @@ ylabel = c('Log local tax per capita', 'Log local tax transfers per capita', 'Lo
 file_names = c('local_tax_munip', 'local_tr_tax_munip', 'local_alloc_tax_munip', 'rents_and_fees_munip', 'treasury_munip', 'prefecture_munip', 'property_munip')
 
 ##---- REVENUE PLOTS LOOPS 5high----
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
 
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
@@ -914,24 +830,6 @@ ratio_2 = c(915, 915, 915, 1050, 915, 915, 915, 915, 1050)
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
   ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
-
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
   png(filename = glue('{file_names[i]}_{substr(eq, 15, 15)}_fe.png'),
       width = ratio[i], height = ratio_2[i], res = 300)
   print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
@@ -1058,23 +956,6 @@ ylabel = c('Log local tax per capita', 'Log local tax transfers per capita', 'Lo
 file_names = c('local_tax_munip', 'local_tr_tax_munip', 'local_alloc_tax_munip', 'rents_and_fees_munip', 'treasury_munip', 'prefecture_munip', 'property_munip')
 
 ##---- REVENUE PLOTS LOOPS 6low MUNICIPALITY FE----
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
 
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
@@ -1255,24 +1136,6 @@ ratio_2 = c(915, 915, 915, 1050, 915, 915, 915, 915, 1050)
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
   ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
-
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
   png(filename = glue('{file_names[i]}_{substr(eq, 15, 15)}_fe.png'),
       width = ratio[i], height = ratio_2[i], res = 300)
   print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
@@ -1399,23 +1262,6 @@ ylabel = c('Log local tax per capita', 'Log local tax transfers per capita', 'Lo
 file_names = c('local_tax_munip', 'local_tr_tax_munip', 'local_alloc_tax_munip', 'rents_and_fees_munip', 'treasury_munip', 'prefecture_munip', 'property_munip')
 
 ##---- REVENUE PLOTS LOOPS 5high MUNICIPALITY FE----
-
-for(i in 1:length(dfs)) {
-  dat = dfs[[i]]
-  ylab = ylabel[i]
-  print(ggplot(data=dat, aes(x=factor(period), y=coefs, group = 1)) +
-          theme_clean() +
-          theme(panel.grid.major.x = element_line(colour = "gray", linetype = "dotted", size = .3),
-                panel.grid.major.y = element_line(colour = "gray", linetype = "dotted", size = .3)) +
-          geom_line(linewidth = .8) + 
-          geom_line(aes(x=factor(period), y=lower, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_line(aes(x=factor(period), y=upper, group = 1), linetype = 'dashed', color = 'blue', linewidth = .8) +
-          geom_ribbon(aes(x=factor(period), ymin=lower, ymax=upper), fill='blue', alpha=0.05) +
-          geom_vline(xintercept = '-1', linetype = 'dashed', linewidth = .4) +
-          geom_hline(yintercept = 0, linetype = 'dashed', linewidth = .4) +
-          xlab('Years Since Earthquake') +
-          ylab(ylab))
-}
 
 for(i in 1:length(dfs)) {
   dat = dfs[[i]]
