@@ -9,10 +9,6 @@ import pandas as pd
 import os
 import numpy as np
 
-def fast(n, axis = 0):
-    a = {0:'row', 1:'column'}
-    pd.set_option(f'display.max_{a[axis]}s', n)
-
 os.chdir('D:\\Data')
 
 prefecture = [
@@ -45,25 +41,10 @@ df_japan = pd.concat(list_japan).reset_index(drop = True).copy()
 df_japan.head(20)
 
 df_japan.rename({'Maximus Building Coverage Ratio(%)':'BC_rate', 'Maximus Floor-area Ratio(%)':'FA_Rate', 'Nearest stationFDistance(minute)':'Nearest_Station_dist_min', 'Nearest stationFName':'Nearest_Station_name'}, axis = 'columns', inplace = True)
-df_inflation = pd.read_csv('Municipality Data/japan_inflation_final.csv', encoding = "ISO-8859-1", low_memory = False)
-df_japan = df_japan.merge(df_inflation.iloc[:, 1:3], left_on = 'Transaction period', right_on = 'quarter_to_join', how = 'left')
-df_japan['Transaction_price_adjusted'] = df_japan['Transaction-price(total)'] - df_japan['Transaction-price(total)']*df_japan['Change_From_2008_1st']
-
-df_japan_to_view = df_japan.head(100)
-
-
-
-uniques = {}
-
-for i in df_japan.columns:
-    uniques[i] = df_japan[i].unique()
     
 drop_list = ['Renovation', 'Region', 'Transaction-price(Unit price m^2)', 'Land shape', 'Frontage', 'Total floor area(m^2)',
              'Purpose of Use', 'Frontage roadFDirection', 'Frontage roadFClassification', 'Frontage roadFBreadth(m)',
              'Transactional factors', 'Area']
-
-cities_unique = df_japan['City,Town,Ward,Village'].unique().tolist()
-len(cities_unique)
 
 risk_years = np.arange(2008, 2023)
 list_japan_risk = []
@@ -103,13 +84,7 @@ def func2(series_1, series_2, list_func2):
     for i in np.arange(0, len(series_1), 1):
         for j in np.arange(0, len(series_2)):
             list_func2.append(str(series_1[i]) + '_' + str(series_2[j])) 
-        
-list_test = []
-series_1 = np.arange(2006, 2021)
-series_2 = ['q1st', 'q2nd', 'q3rd', 'q4th']
-func2(series_1, series_2, list_test)
-       
-
+            
 string = 'Total_pop'
 list_pop = []
 func(string, list_test, list_pop)
@@ -254,32 +229,12 @@ df_japan_land_building.dropna(subset = ['Building structure']).isna().sum()
 land_building_year_na = df_japan_land_building[df_japan_land_building['Year of construction'].isna()]
 land_building_year_not_na = df_japan_land_building[df_japan_land_building['Year of construction'].notna()]
 
-list_counts = ['Year', 'Prefecture', 'Year of construction', 'Building structure', 'Use', 'City Planning', 
-               'BC_rate', 'FA_Rate', 'Transaction period']
-
-col_name_checks = ['dist_full', 'dist_no_na', 'dist_na']
-list_dist_checks = []
-
-for i in np.arange(0, len(list_counts)):
-    string_column = list_counts[i]
-    df_loop_dist = (df_japan_land_building.groupby(string_column).agg({string_column:'count'})/len(df_japan_land_building)).merge((land_building_year_not_na.groupby([string_column]).agg({string_column:'count'})/len(land_building_year_not_na)).merge(land_building_year_na.groupby([string_column]).agg({string_column:'count'})/len(land_building_year_na), left_index = True, right_index = True), left_index = True, right_index = True)
-    for y in np.arange(0, 3):
-        df_loop_dist.columns = df_loop_dist.columns.str.replace(df_loop_dist.columns[y], col_name_checks[y])
-    list_dist_checks.append(df_loop_dist)
-    
-distribution_checks = pd.concat(list_dist_checks, axis = 0)
-for_first_land_building = df_japan_land_building.drop('Layout', axis = 1).dropna().copy()
-for_first_condoominum = df_japan_condominiums.dropna().copy()
-
-in_japaneese = []
-
 mapping = pd.read_csv('Mapping Files/Transaction_ID_Maping_Python.csv')[['ID_1', 'ADM2_PCODE']]
 df_japan_condominiums = df_japan_condominiums.merge(mapping, left_on = 'City,Town,Ward,Village code', right_on = 'ID_1', how = 'left')
 df_japan_land_building = df_japan_land_building.merge(mapping, left_on = 'City,Town,Ward,Village code', right_on = 'ID_1', how = 'left')
 
 df_japan_condominiums = df_japan_condominiums.merge(df_eq_risk, on = ['Year', 'ADM2_PCODE'], how = 'left')
 df_japan_land_building = df_japan_land_building.merge(df_eq_risk, on = ['Year', 'ADM2_PCODE'], how = 'left')
-
 
 #%%
 earthquakes_5_plus = pd.read_csv('Earthquake Info\All Earthquakes with 5+ max intensity.csv')
@@ -523,14 +478,6 @@ data_buildings_R.to_csv('data_buildings_R.csv')
 data_condominiums_R_only_house.to_csv('data_condominiums_R_only_house.csv')
 data_buildings_R_only_house.to_csv('data_buildings_R_only_house.csv')
 
-a = np.isin(df_japan_land_building['ADM2_PCODE'].unique(), panel_all_earthquakes_grouped.reset_index()['Shi_Chou_Son_ID'].unique())
-np.isin(df_japan_land_building[df_japan_land_building.Year >=2012]['Transaction period'].unique(), panel_all_earthquakes_grouped.reset_index()['Shi_Chou_Son_ID'].unique())
-
-data_condominiums_R[data_condominiums_R['Period'] == '2nd quarter 2016'].groupby('Shi_Chou_Son_ID').count().iloc[:, 0].sort_values()
-
-
-data_buildings_R_only_house.Use.unique()
-
 wide_all_earthquakes_5high = panel_all_earthquakes.pivot_table(index='Shi_Chou_Son_ID',
                                                                columns='Period_2',
                                                                values= '5_high',
@@ -616,8 +563,7 @@ for i in np.arange(0, len(wide_all_earthquakes_5_high_2010.columns)-1):
         if wide_all_earthquakes_5_high_2010.iloc[j, i] > 0:
            for k in np.delete(np.arange(0, len(wide_all_earthquakes_5_high_2010.columns)-1), i):
                wide_all_earthquakes_5_high_2010.iloc[j, k] = 0
-
-               
+        
 for i in np.arange(0, len(wide_all_earthquakes_5_higher_2010.columns)-1):
     for j in np.arange(0, len(wide_all_earthquakes_5_higher_2010)):
         if wide_all_earthquakes_5_higher_2010.iloc[j, i] > 0:
@@ -629,8 +575,6 @@ for i in np.arange(0, len(wide_all_earthquakes_5_higher_2010.columns)-1):
            for k in np.delete(np.arange(0, len(wide_all_earthquakes_5_higher_2010.columns)-1), i):
                wide_all_earthquakes_5_higher_2010.iloc[j, k] = 0
 
-
-               
 munip_social_exp = pd.read_csv('Municipality Data\Municipalities_All_Expenditures_Panel.csv')
 munip_social_exp.rename({'Time':'FY_Year'}, axis = 'columns', inplace = True)
 munip_social_exp.insert(len(munip_social_exp.columns), 'pop_period', '1st quarter ' + munip_social_exp.FY_Year.str[2:7])
@@ -660,7 +604,6 @@ filt = (munip_social_exp.value_counts('ADM2_PCODE') == 10)[munip_social_exp.valu
 munip_social_exp = munip_social_exp[munip_social_exp.ADM2_PCODE.isin(filt)]
 filt = munip_social_exp[munip_social_exp['Settlement of total revenue (municipalities)?1,000 yen?'].isna()].ADM2_PCODE.unique()
 munip_social_exp = munip_social_exp[np.logical_not(munip_social_exp.ADM2_PCODE.isin(filt))]
-
 
 munip_social_exp.to_csv('munip_exp_to_R.csv')
 
@@ -695,4 +638,3 @@ filt = munip_social_exp.ADM2_PCODE.unique()
 munip_social_rev = munip_social_rev[munip_social_rev.ADM2_PCODE.isin(filt)]
 
 munip_social_rev.to_csv('munip_rev_to_R.csv')
-
